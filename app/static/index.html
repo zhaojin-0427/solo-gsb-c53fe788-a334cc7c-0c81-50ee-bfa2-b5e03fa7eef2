@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>字幕节奏与镜头边界校正台</title>
+<link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<header>
+  <h1>字幕节奏与镜头边界校正台</h1>
+  <div id="source-info" class="source-info">尚未导入数据</div>
+</header>
+
+<main>
+  <section class="card">
+    <h2>1. 导入数据</h2>
+    <div class="import-row">
+      <label class="file-box">
+        <span class="file-label">字幕文件（SRT / WebVTT）</span>
+        <input type="file" id="subtitle-file" accept=".srt,.vtt">
+      </label>
+      <label class="file-box">
+        <span class="file-label">镜头 JSON（含起止毫秒）</span>
+        <input type="file" id="shots-file" accept=".json">
+      </label>
+      <div class="btn-row">
+        <button id="btn-import" class="primary">导入选中文件</button>
+        <button id="btn-reset" class="danger">清空全部数据</button>
+      </div>
+    </div>
+    <p class="hint">镜头 JSON 支持 <code>[{"start":0,"end":2400}, ...]</code> 或 <code>{"shots":[...]}</code>；
+      键名兼容 start_ms/startMs/in/from、end_ms/endMs/out/to。</p>
+  </section>
+
+  <section class="card">
+    <h2>2. 校正参数</h2>
+    <div class="params">
+      <label>每秒字符数上限（字素簇/秒）
+        <input type="number" id="in-cps" min="0.1" step="0.5" value="20">
+      </label>
+      <label>最小间隔（ms）
+        <input type="number" id="in-gap" min="0" step="10" value="40">
+      </label>
+      <label>镜头边界容差（ms）
+        <input type="number" id="in-tol" min="0" step="10" value="120">
+      </label>
+    </div>
+    <div class="btn-row">
+      <button id="btn-save-settings">保存参数</button>
+      <button id="btn-analyze">检查问题</button>
+      <button id="btn-solve" class="primary">搜索校正方案（仅平移）</button>
+      <button id="btn-adopt-all">全部采纳可采纳项</button>
+      <button id="btn-adopt-reset">清除采纳</button>
+      <button id="btn-export" class="success">导出校正 JSON</button>
+    </div>
+    <div id="msg" class="msg"></div>
+  </section>
+
+  <section class="card">
+    <div class="tabs">
+      <button class="tab active" data-tab="issues">问题清单</button>
+      <button class="tab" data-tab="solution">校正方案</button>
+      <button class="tab" data-tab="conflicts">冲突链</button>
+      <button class="tab" data-tab="timeline">时间轴</button>
+    </div>
+
+    <div id="tab-issues" class="tab-panel active">
+      <div id="issues-summary" class="summary"></div>
+      <div class="table-wrap">
+        <table id="issues-table">
+          <thead><tr>
+            <th>#</th><th>cue_id</th><th>时间</th><th>时长</th><th>字数</th><th>CPS</th><th>问题</th><th>原文</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="tab-solution" class="tab-panel">
+      <div id="solution-summary" class="summary"></div>
+      <div class="table-wrap">
+        <table id="solution-table">
+          <thead><tr>
+            <th>采纳</th><th>#</th><th>cue_id</th><th>原起点 → 校正起点</th><th>平移 Δ</th>
+            <th>时长</th><th>状态</th><th>校正后剩余问题</th><th>原文</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="tab-conflicts" class="tab-panel">
+      <div id="conflicts-box"></div>
+    </div>
+
+    <div id="tab-timeline" class="tab-panel">
+      <p class="hint">蓝色=原字幕位置，绿色=校正后位置，灰色=镜头；红边表示冲突条。</p>
+      <div id="timeline-box"></div>
+    </div>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

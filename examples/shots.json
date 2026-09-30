@@ -1,0 +1,9 @@
+{
+  "shots": [
+    { "id": "shot-0001", "start": 0,    "end": 3500 },
+    { "id": "shot-0002", "start": 3500, "end": 6000 },
+    { "id": "shot-0003", "start": 6000, "end": 8350 },
+    { "id": "shot-0004", "start": 8350, "end": 10000 },
+    { "id": "shot-0005", "start": 10000, "end": 14000 }
+  ]
+}

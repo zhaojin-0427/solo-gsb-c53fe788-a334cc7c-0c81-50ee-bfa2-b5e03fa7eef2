@@ -1,0 +1,9 @@
+services:
+  subtitle-desk:
+    build: .
+    container_name: subtitle-correction-desk
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
